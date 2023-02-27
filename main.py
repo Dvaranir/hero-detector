@@ -1,13 +1,16 @@
-from modules.image_data import Image
+from modules.background import Background
+from modules.controller import Controller
 import cv2
+import os
 
 def_input = './tests/6.jpg' # Load the image
 def_background = './backgrounds/01.png'
-img = Image(def_input, def_background)
 
-img.crop_background(513)
+controller = Controller(def_input)
 
-# cv2.imshow('bordered_image.png', img.image)
+# controller.photo.remove_background()
+
+# cv2.imshow('bordered_image.png', bcs.photo.image)
 # cv2.waitKey(0)
-# cv2.imwrite('bordered_image.png', add_border(img.image))
+controller.process_image()
 

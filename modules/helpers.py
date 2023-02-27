@@ -1,4 +1,0 @@
-class Helpers:
-    
-    @staticmethod
-    
