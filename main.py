@@ -1,12 +1,11 @@
 from modules.background import Background
 from modules.controller import Controller
-import cv2
-import os
 
-def_input = './tests/6.jpg' # Load the image
+def_input = './tests/from_client2.jpg' # Load the image
 def_background = './backgrounds/01.png'
+def_pattern = './pattern/marker.png'
 
-controller = Controller(def_input)
+controller = Controller(def_input, def_pattern)
 
 # controller.photo.remove_background()
 

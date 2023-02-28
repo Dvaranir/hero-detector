@@ -5,6 +5,7 @@ import dlib
 import numpy as np
 
 from math import hypot
+from .helpers import *
 
 class FaceReplacer:
     
@@ -17,12 +18,10 @@ class FaceReplacer:
     
     @staticmethod
     def round_up(n, decimals = 0):
-        # if (decimals == 100): return n
-        print(n)
         multiplier = 10 ** decimals
         return math.ceil(n * multiplier) / multiplier
 
-    def detect_faces(self):
+    def replace_faces(self):
         self.faces = self.face_detector(self.photo_gray)
 
         for face in self.faces:
@@ -86,25 +85,20 @@ class FaceReplacer:
 
             face_area_no_face = cv2.bitwise_and(face_area, face_area, mask=mask)
             
-            if mask_resized.shape[2] < 4:
-                alpha = np.ones(mask_resized.shape[:2], dtype=mask_resized.dtype) * 255
-                mask_resized = cv2.merge((mask_resized, alpha))
-                
-            if face_area_no_face.shape[2] < 4:
-                alpha = np.ones(face_area_no_face.shape[:2], dtype=face_area_no_face.dtype) * 255
-                face_area_no_face = cv2.merge((face_area_no_face, alpha))
+            mask_resized = fix_channels(mask_resized)
+            face_area_no_face = fix_channels(face_area_no_face)
             
             final_mask = cv2.add(face_area_no_face, mask_resized)
 
             writable_photo = self.photo.image.copy()
             writable_photo.flags.writeable = True
             
-            if writable_photo.shape[2] < 4:
-                alpha = np.ones(writable_photo.shape[:2], dtype=writable_photo.dtype) * 255
-                writable_photo = cv2.merge((writable_photo, alpha))
+            writable_photo = fix_channels(writable_photo)
             
             writable_photo[face_top_left[1]: face_top_left[1] + face_height,
                         face_top_left[0]: face_top_left[0] + face_width] = final_mask
+            
+            self.photo.image = writable_photo
 
             # cv2.rectangle(input_image, face_top_left, face_bottom_right, (0, 255, 0), 2)
             # cv2.circle(input_image, face_center, 3, (0, 255, 0), -1)
@@ -113,9 +107,9 @@ class FaceReplacer:
             # cv2.circle(input_image, face_right, 3, (255, 0, 0), -1)
             # cv2.circle(input_image, face_bottom, 3, (255, 0, 0), -1)
 
-            cv2.imshow('Input Image Replaced BG', writable_photo)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
+            # cv2.imshow('Input Image Replaced BG', writable_photo)
+            # cv2.waitKey(0)
+            # cv2.destroyAllWindows()
             # cv2.imshow('Target mask', mask_resized)
 
 

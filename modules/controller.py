@@ -1,8 +1,6 @@
 import os
 import random
 import cv2
-import uuid
-import inspect
 import numpy as np
 
 from PIL import Image
@@ -10,44 +8,27 @@ from PIL import Image
 from .photo import Photo
 from .background import Background
 from .face_replacer import FaceReplacer
+from .pattern_detector import PatternDetector
+from .helpers import *
 
 class Controller:
     
-    def __init__(self, photo_path):
+    def __init__(self, photo_path, pattern_path):
         self.photo = Photo(photo_path)
         self.background = Background(self.choose_random_background())
         self.face_replacer = FaceReplacer(self.photo, self.choose_random_mask())
+        self.pattern_detector = PatternDetector(self.photo, pattern_path)
                 
         self._BIGGEST_RESOLUTION = 1920
         self._SMALLEST_RESOLUTION = 1080
-        
-    @staticmethod
-    def cut_height(cut_size, image):
-        start = int(cut_size / 2)
-        end = 1920 - start
-        return image[start:end, :]
-
-    @staticmethod
-    def cut_width(cut_size, image):
-        start = int(cut_size / 2)
-        end = int(start + 1920 - cut_size)
-        return image[:, start:end]
-    
-    @staticmethod
-    def save_image(image):
-        image_name = f'photo-{uuid.getnode()}.png'
-        cv2.imwrite(image_name, image)
-        
-    @staticmethod
-    def show_image(image, frame=inspect.currentframe()):
-        cv2.imshow(f'{inspect.getframeinfo(frame).function}', image)
-        cv2.waitKey(0)
     
     def make_background_fit_image(self):
         if self.photo.layout_format == 'vertical':
-            self.background.cut_height(self.photo.height)
+            cut_size = self._BIGGEST_RESOLUTION - self.photo.height
+            self.background.image = cut_height(cut_size, self.background.image)
         else:
-            self.background.cut_width(self.photo.width)
+            cut_size = self._BIGGEST_RESOLUTION - self.photo.width
+            self.background.image = cut_width(cut_size, self.background.image)
             
     def choose_random_mask(self):
         masks_dir = './masks/'
@@ -63,22 +44,22 @@ class Controller:
         return backgrounds_dir + random.choice(all_backgrounds)
     
     
-    def crop_background(self):
-        background_height = self.background.image.shape[0]
-        background_width = self.background.image.shape[1]
+    # def crop_background(self):
+    #     background_height = self.background.image.shape[0]
+    #     background_width = self.background.image.shape[1]
         
-        if (self.photo.layout_format == 'vertical'):
-            crop_size = 1920 - self.photo.height
-            new_height = 1920 - crop_size
-            y = int(crop_size / 2)
-            x = 0
-            self.background.image = self.background.image[y:new_height, x:x+background_width]
-        else:
-            crop_size = 1920 - self.photo.width
-            new_width = 1920 - crop_size
-            x = int(crop_size / 2)
-            y = 0
-            self.background.image = self.background.image[y:background_height, x:x+new_width]
+    #     if (self.photo.layout_format == 'vertical'):
+    #         crop_size = 1920 - self.photo.height
+    #         new_height = 1920 - crop_size
+    #         y = int(crop_size / 2)
+    #         x = 0
+    #         self.background.image = self.background.image[y:new_height, x:x+background_width]
+    #     else:
+    #         crop_size = 1920 - self.photo.width
+    #         new_width = 1920 - crop_size
+    #         x = int(crop_size / 2)
+    #         y = 0
+    #         self.background.image = self.background.image[y:background_height, x:x+new_width]
             
             
     def place_photo_on_background(self):
@@ -114,10 +95,12 @@ class Controller:
     #     self.photo.image = cv2.copyMakeBorder(self.photo.image, b_top, b_bottom, b_left, b_right, cv2.BORDER_CONSTANT, value=(0, 0, 0, 0))
     
     def process_image(self):
-        self.photo.remove_background()
-        self.photo.resize_to_fullhd()
-        self.crop_background()
-        self.place_photo_on_background()
-        self.face_replacer.detect_faces()
-        # self.save_image(self.photo_replaced_background)
+        # self.photo.remove_background()
+        # self.photo.resize_to_fullhd()
+        # # self.crop_background()
+        # self.make_background_fit_image()
+        # self.place_photo_on_background()
+        # self.face_replacer.replace_faces()
+        # save_image(self.photo.image)
+        self.pattern_detector.marker_found()
         
