@@ -1,5 +1,4 @@
 import cv2
-
 import math
 import dlib
 import numpy as np
@@ -39,14 +38,17 @@ class FaceReplacer:
             face_center = [landmarks.part(8).x, landmarks.part(30).y]
 
             face_top = [landmarks.part(27).x, landmarks.part(20).y]
+            
+            # First, calculate the angle between the left and right points of the face
+            angle = np.arctan2(face_right[1] - face_left[1], face_right[0] - face_left[0]) * 180 / np.pi
 
             length_from_right = face_right[0] - face_center[0]
             length_from_left = face_center[0] - face_left[0]
-
+            
             deflection_percent = 100
 
-            print("From top", length_from_right)
-            print("From left", length_from_left + length_from_left / 100 * deflection_percent)
+            # print("From top", length_from_right)
+            # print("From left", length_from_left + length_from_left / 100 * deflection_percent)
 
             if length_from_left > length_from_right:
                 deflection_percent -= length_from_right / (length_from_left / 100)
@@ -60,15 +62,19 @@ class FaceReplacer:
             mask_height = self.mask.shape[0]
             mask_width = self.mask.shape[1]
             
+            # Calculate the center point of the mask image
+            mask_center = (mask_width // 2, mask_height // 2)
+            
             mask_height_ratio = self.round_up(mask_height / mask_width)
 
             face_width = int(hypot(face_left[0] - face_right[0],
                                 face_left[1] - face_right[1]))
-
+            mask_height_modifier = 1
             face_height = int(face_width * mask_height_ratio)
-            face_height = int(face_height + (face_height / 100) * 30)
+            face_height = int(face_height + (face_height / 100) * mask_height_modifier - 100)
 
-            face_width = int(face_width + (face_width / 100) * 30)
+            mask_width_modifier = 20
+            face_width = int(face_width + (face_width / 100) * mask_width_modifier)
 
             face_top_left = (int(face_center[0] - face_width / 2),
                             int(face_center[1] - face_height / 2))
@@ -78,8 +84,15 @@ class FaceReplacer:
 
             face_area = self.photo.image[face_top_left[1]: face_top_left[1] + face_height,
                                     face_top_left[0]: face_top_left[0] + face_width]
+            
+            # Generate the rotation matrix
+            rot_matrix = cv2.getRotationMatrix2D(mask_center, angle, 1.0)
 
-            mask_resized = cv2.resize(self.mask, (face_width, face_height))
+            # Rotate the mask image
+            rotated_mask = cv2.warpAffine(self.mask, rot_matrix, (mask_width, mask_height))
+
+            mask_resized = cv2.resize(rotated_mask, (face_width, face_height))
+            # mask_resized = cv2.resize(self.mask, (face_width, face_height))
             mask_image_gray = cv2.cvtColor(mask_resized, cv2.COLOR_BGR2GRAY)
             _, mask = cv2.threshold(mask_image_gray, 0, 255, cv2.THRESH_BINARY_INV)
 
@@ -111,6 +124,7 @@ class FaceReplacer:
             # cv2.waitKey(0)
             # cv2.destroyAllWindows()
             # cv2.imshow('Target mask', mask_resized)
+
 
 
     

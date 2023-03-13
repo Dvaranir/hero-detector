@@ -18,24 +18,8 @@ class Photo:
     def resize_with_aspect_ratio(self, new_size):
         new_height = int(new_size / self.ratio)
         self.image = cv2.resize(self.image, (new_size, new_height), interpolation=cv2.INTER_LINEAR)
-        
-    # def resize_to_fullhd(self):
-    #     if (self.layout_format == 'horizontal'):
-    #         new_height = 1080
-    #         new_width = int(new_height * self.ratio)
-    #         if new_width > 1920:
-    #             new_width = 1920
-    #             new_height = int(new_width / self.ratio)
-    #         self.image = cv2.resize(self.image, (new_width, new_height))
-    #     else:
-    #         new_width = 1080
-    #         new_height = int(new_width / self.ratio)
-    #         if new_height > 1920:
-    #             new_height = 1920
-    #             new_width = int(new_height * self.ratio)
-    #         self.image = cv2.resize(self.image, (new_width, new_height))
-    #     self.update_data()
-    
+        self.update_data()
+
     def resize_to_fullhd(self):
         if (self.layout_format == 'horizontal'):
             new_height = 1080

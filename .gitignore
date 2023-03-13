@@ -3,3 +3,7 @@ tests/
 .idea
 source
 *.dat
+/input_images/*.png
+/input_images/*.jpg
+/output_images/*.png
+/output_images/*.jpg
