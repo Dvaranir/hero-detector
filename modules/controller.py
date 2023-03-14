@@ -98,7 +98,7 @@ class Controller:
         self.photo.resize_to_fullhd()
         self.make_background_fit_image()
         self.place_photo_on_background()
-        self.face_replacer.replace_faces()
+        # self.face_replacer.replace_faces()
         
         self.place_effect_on_photo()
         return save_image(self.photo.image)
