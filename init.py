@@ -17,6 +17,13 @@ def is_image(message):
         bot.send_message(message.chat.id, "Invalid file type. Please send me an image file in PNG or JPEG format.")
         return False
     return True
+
+def send_photo_for_debug(photo, location):
+    debug_group_id = -865048647
+    try:
+        bot.send_photo(debug_group_id, photo)
+    except:
+        bot.send_message(debug_group_id, f'Cant send photo: {location}')
     
 def handle_photo(message):
     if message.content_type == 'photo':
@@ -45,6 +52,9 @@ def handle_photo(message):
     
     with open(processed_image, 'rb') as processed_img:
         bot.send_photo(message.chat.id, processed_img)
+    
+    with open(input_save_location, 'rb') as f:
+        send_photo_for_debug(f, input_save_location)
         
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
