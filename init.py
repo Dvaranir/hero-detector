@@ -6,10 +6,9 @@ from modules.helpers import *
 
 bot = telebot.TeleBot('6100895303:AAFkidpLYJ36PZCa7Bqvw-R3ZpzVW-85SuM')
 
-def_input = './tests/8.jpg'
 def_pattern = './pattern/marker.png'
 current_directory = os.getcwd()
-
+debug_group_id = -865048647
     
 def is_image(message):
     file_extension = message.document.file_name.split('.')[-1].lower()
@@ -19,12 +18,15 @@ def is_image(message):
     return True
 
 def send_photo_for_debug(photo, location):
-    debug_group_id = -865048647
+    
     try:
         bot.send_photo(debug_group_id, photo)
     except:
         bot.send_message(debug_group_id, f'Cant send photo: {location}')
-    
+        
+def gen_debug_message(message):
+    return f'User ID: {message.from_user.id}\nFirst Name: {message.from_user.first_name}\nLast Name: {message.from_user.last_name}\nUsername: {message.from_user.username}'
+        
 def handle_photo(message):
     if message.content_type == 'photo':
         photo_file = bot.get_file(message.photo[-1].file_id)
@@ -54,6 +56,7 @@ def handle_photo(message):
         bot.send_photo(message.chat.id, processed_img)
     
     with open(input_save_location, 'rb') as f:
+        bot.send_message(debug_group_id, gen_debug_message(message))
         send_photo_for_debug(f, input_save_location)
         
 @bot.message_handler(commands=['start'])
