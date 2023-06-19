@@ -25,7 +25,7 @@ processed_image = controller.process_image()
 
 <br>
 
-### В директории models находится модель для обнаружения лица
+### В директории models находится модель для обнаружения лица shape_predictor_68_face_landmarks.dat
 ### В директории masks находится тестовая маска
 ### В директории backgrounds фоны
 ### В директории effects - эффекты, вместе с исходниками
@@ -33,7 +33,6 @@ processed_image = controller.process_image()
 ### В директорию input_images сохраняются присланные фотографии
 ### В директорию output_images сохраняются обработанные фотографии
 
-<br>
 <br>
 
 # Настройки:
