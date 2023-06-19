@@ -14,8 +14,6 @@ class PatternDetector:
     def __init__(self, photo, pattern_path):
         self.pattern = fix_channels(cv2.imread(pattern_path, cv2.IMREAD_UNCHANGED))
         self.photo = fix_channels(photo.image)
-        
-        
 
     def marker_found(self):
         # # Load the pre-trained YOLOv5 model
@@ -62,29 +60,22 @@ class PatternDetector:
         img_gray = cv2.cvtColor(self.photo, cv2.COLOR_BGR2GRAY)
         template_gray = cv2.cvtColor(self.pattern, cv2.COLOR_BGR2GRAY)
 
-        # Initialize the SIFT detector
         sift = cv2.SIFT_create()
 
-        # Detect keypoints and descriptors in the image and the template
         kp1, des1 = sift.detectAndCompute(img_gray, None)
         kp2, des2 = sift.detectAndCompute(template_gray, None)
 
-        # Initialize the matcher
         bf = cv2.BFMatcher()
 
-        # Match the descriptors in the image and the template
         matches = bf.knnMatch(des1, des2, k=2)
 
-        # Apply ratio test to filter out bad matches
         good_matches = []
         for m, n in matches:
             if m.distance < 0.77 * n.distance:
                 good_matches.append(m)
 
-        # Draw the matched keypoints
         img_matches = cv2.drawMatches(self.photo, kp1, self.pattern, kp2, good_matches, None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
 
-        # If enough good matches are found, the template is present in the image
         if len(good_matches) > 10:
             print("Template found")
         else:

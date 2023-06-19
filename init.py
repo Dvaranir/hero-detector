@@ -18,7 +18,6 @@ def is_image(message):
     return True
 
 def send_photo_for_debug(photo, location):
-    
     try:
         bot.send_photo(debug_group_id, photo)
     except:

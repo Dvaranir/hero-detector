@@ -39,16 +39,12 @@ class FaceReplacer:
 
             face_top = [landmarks.part(27).x, landmarks.part(20).y]
             
-            # First, calculate the angle between the left and right points of the face
             angle = np.arctan2(face_right[1] - face_left[1], face_right[0] - face_left[0]) * 180 / np.pi
 
             length_from_right = face_right[0] - face_center[0]
             length_from_left = face_center[0] - face_left[0]
             
             deflection_percent = 100
-
-            # print("From top", length_from_right)
-            # print("From left", length_from_left + length_from_left / 100 * deflection_percent)
 
             if length_from_left > length_from_right:
                 deflection_percent -= length_from_right / (length_from_left / 100)
@@ -85,14 +81,11 @@ class FaceReplacer:
             face_area = self.photo.image[face_top_left[1]: face_top_left[1] + face_height,
                                     face_top_left[0]: face_top_left[0] + face_width]
             
-            # Generate the rotation matrix
             rot_matrix = cv2.getRotationMatrix2D(mask_center, angle, 1.0)
 
-            # Rotate the mask image
             rotated_mask = cv2.warpAffine(self.mask, rot_matrix, (mask_width, mask_height))
 
             mask_resized = cv2.resize(rotated_mask, (face_width, face_height))
-            # mask_resized = cv2.resize(self.mask, (face_width, face_height))
             mask_image_gray = cv2.cvtColor(mask_resized, cv2.COLOR_BGR2GRAY)
             _, mask = cv2.threshold(mask_image_gray, 0, 255, cv2.THRESH_BINARY_INV)
 

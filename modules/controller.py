@@ -85,7 +85,6 @@ class Controller:
             
             effect_pil = self.make_effect_fit_image_PILL(fix_channels_PIL(Image.fromarray(cv2.cvtColor(self.effect, cv2.COLOR_BGR2RGBA))))
             
-            # effect_pil = Image.open(self.effect)
             image_pil = fix_channels_PIL(Image.fromarray(cv2.cvtColor(self.photo.image, cv2.COLOR_BGR2RGB)))
             
             effect_pil = effect_pil.resize((image_pil.size[0], image_pil.size[1]))
