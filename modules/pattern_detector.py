@@ -16,40 +16,28 @@ class PatternDetector:
         self.photo = fix_channels(photo.image)
 
     def marker_found(self):
-        # # Load the pre-trained YOLOv5 model
         # model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
 
-        # # Load the pattern image
         # pattern_img = self.pattern
 
-        # # Convert pattern image to PyTorch tensor
         # pattern_tensor = torch.from_numpy(pattern_img).float().permute(2, 0, 1).unsqueeze(0) / 255
 
-        # # Load the image to search for the pattern
         # search_img = self.photo
 
-        # # Detect objects in the search image using YOLOv5
         # results = model(search_img)
 
-        # # Loop over the detected objects
         # for obj in results.pred[0]:
 
-        #     # Extract the object's bounding box coordinates
         #     x1, y1, x2, y2 = obj[:4].int().tolist()
 
-        #     # Extract the object's image patch
         #     obj_patch = search_img[y1:y2, x1:x2]
 
-        #     # Resize object patch to match the size of the pattern image
         #     obj_patch_resized = cv2.resize(obj_patch, (pattern_img.shape[1], pattern_img.shape[0]))
 
-        #     # Convert object patch to PyTorch tensor
         #     obj_tensor = torch.from_numpy(obj_patch_resized).float().permute(2, 0, 1).unsqueeze(0) / 255
 
-        #     # Compute the similarity score between the pattern tensor and object tensor
         #     similarity = torch.nn.functional.cosine_similarity(pattern_tensor, obj_tensor, dim=1)
 
-        #     # If similarity score is above a threshold, then we have a match
         #     if similarity.item() > 0.9:
         #         print("True")
         #         break
